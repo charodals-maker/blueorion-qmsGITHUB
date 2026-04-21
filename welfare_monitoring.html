@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welfare & Monitoring</title>
+    <link rel="stylesheet" href="../assets/styles.css">
+    <style>
+        body { font-family: Arial, sans-serif; background: #f4f8ff; }
+        .container { max-width: 900px; margin: 40px auto; background: #fff; border-radius: 10px; box-shadow: 0 8px 32px rgba(0,0,0,0.08); padding: 32px; }
+        h1 { color: #003366; margin-bottom: 24px; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 24px; }
+        th, td { padding: 12px; border-bottom: 1px solid #e5e7eb; text-align: left; }
+        th { background: #e6f0ff; color: #003366; }
+        tr:last-child td { border-bottom: none; }
+        .status-active { color: #166534; font-weight: bold; }
+        .status-inactive { color: #b91c1c; font-weight: bold; }
+        .add-btn { background: #003366; color: #fff; border: none; padding: 10px 18px; border-radius: 6px; cursor: pointer; font-weight: 600; }
+        .add-btn:hover { background: #004a80; }
+        .log-section { margin-top: 32px; }
+        .log-section h2 { color: #003366; }
+        .log-list { background: #f9fafb; border-radius: 8px; padding: 16px; min-height: 60px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Welfare & Monitoring</h1>
+        <div style="display: flex; gap: 16px; margin-bottom: 18px; align-items: center;">
+            <button id="sosBtn" style="background: #b91c1c; color: #fff; border: none; padding: 12px 24px; border-radius: 6px; font-weight: bold; font-size: 16px; cursor: pointer;">🚨 EMERGENCY SOS</button>
+            <div style="font-size: 15px; color: #003366;">
+                <strong>24/7 Hotline:</strong> <a href="tel:+6321234567" style="color:#b91c1c; text-decoration:underline;">+63 2 123 4567</a>
+            </div>
+            <button id="grievanceBtn" style="background: #003366; color: #fff; border: none; padding: 10px 18px; border-radius: 6px; font-weight: 600;">📝 Anonymous Grievance</button>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Worker Name</th>
+                    <th>Status</th>
+                    <th>Last Check-in</th>
+                    <th>Country</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="workerTableBody">
+                <!-- Worker rows will be inserted here -->
+            </tbody>
+        </table>
+        <button class="add-btn" onclick="addWorker()">Add Worker</button>
+        <div class="log-section">
+            <h2>Communication Log</h2>
+            <div class="log-list" id="logList">
+                <!-- Logs will appear here -->
+            </div>
+        </div>
+    </div>
+    <script>
+        // Demo data for now
+        const workers = [
+            { name: 'Maria Santos', status: 'Active', lastCheckin: '2026-04-10', country: 'Saudi Arabia' },
+            { name: 'Juan Dela Cruz', status: 'Inactive', lastCheckin: '2026-03-28', country: 'Qatar' }
+        ];
+        const logs = [
+            '2026-04-10: Maria Santos checked in from Saudi Arabia.',
+            '2026-03-28: Juan Dela Cruz missed check-in.'
+        ];
+        function renderWorkers() {
+            const tbody = document.getElementById('workerTableBody');
+            tbody.innerHTML = '';
+            workers.forEach((w, i) => {
+                tbody.innerHTML += `<tr>
+                    <td>${w.name}</td>
+                    <td class="status-${w.status.toLowerCase()}">${w.status}</td>
+                    <td>${w.lastCheckin}</td>
+                    <td>${w.country}</td>
+                    <td><button onclick="logCheckin(${i})">Log Check-in</button></td>
+                </tr>`;
+            });
+        }
+        function renderLogs() {
+            const logDiv = document.getElementById('logList');
+            logDiv.innerHTML = logs.map(l => `<div>${l}</div>`).join('');
+        }
+        function addWorker() {
+            const name = prompt('Worker Name:');
+            const country = prompt('Country:');
+            if (name && country) {
+                workers.push({ name, status: 'Active', lastCheckin: new Date().toISOString().slice(0,10), country });
+                logs.push(`${new Date().toISOString().slice(0,10)}: ${name} added and checked in from ${country}.`);
+                renderWorkers();
+                renderLogs();
+            }
+        }
+        function logCheckin(idx) {
+            workers[idx].lastCheckin = new Date().toISOString().slice(0,10);
+            workers[idx].status = 'Active';
+            logs.push(`${workers[idx].lastCheckin}: ${workers[idx].name} checked in from ${workers[idx].country}.`);
+            renderWorkers();
+            renderLogs();
+        }
+
+        // Emergency SOS button logic
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('sosBtn').onclick = function() {
+                alert('🚨 EMERGENCY SOS TRIGGERED!\n\nYour request for immediate assistance has been sent. Help is on the way.');
+                logs.push(`${new Date().toISOString().slice(0,16).replace('T',' ')}: EMERGENCY SOS triggered!`);
+                renderLogs();
+            };
+            document.getElementById('grievanceBtn').onclick = function() {
+                const msg = prompt('Submit your anonymous grievance or report:');
+                if (msg) {
+                    logs.push(`${new Date().toISOString().slice(0,10)}: Anonymous grievance submitted.`);
+                    alert('Thank you. Your report has been received anonymously.');
+                    renderLogs();
+                }
+            };
+        });
+        renderWorkers();
+        renderLogs();
+    </script>
+</body>
+</html>
